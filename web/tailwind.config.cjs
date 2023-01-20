@@ -2,7 +2,14 @@
 module.exports = {
   content: ['./src/**/*.tsx', './index.html'],
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        background: '#09090A'
+      },
+      gridTemplateRows: {
+        7: 'repeate(7, minmax(0,1fr))'
+      }
+    }
   },
   plugins: []
 }

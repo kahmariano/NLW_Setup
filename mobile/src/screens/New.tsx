@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { View , ScrollView , Text, TextInput, TouchableOpacity} from "react-native";
+import { View , ScrollView , Text, TextInput, TouchableOpacity, Alert} from "react-native";
 import colors from "tailwindcss/colors";
 import { BackButton } from "../components/BackButton";
 import { CheckBox } from "../components/Checkbox";
 import {Feather} from '@expo/vector-icons'
- 
+ import { api } from "../lib/axios";
 
 const availableWeekDays = [
   "Domingo",
@@ -19,7 +19,7 @@ const availableWeekDays = [
 
  export function New() {
 
-
+const [title, setTitle] = useState('')
 const [ weekDays , setWeekDays] = useState<number[]>([])
 
 function handleToggleWeekDay(weekDayIndex: number) {
@@ -32,6 +32,19 @@ if(weekDays.includes(weekDayIndex)) {
 
 }
 
+async function handleCreateNewHabit() {
+  try {
+    if (!title.trim() || weekDays.length === 0 ) {
+    Alert.alert('Novo hábito', 'Informe o nome do hábito e/ou escolha a periodicidade')}
+    await api.post('/habits', {title, weekDays})
+    setTitle('')
+    setWeekDays([])
+      Alert.alert('Novo hábito', 'Hábito criado com sucesso')
+  } catch (error) {
+    console.log(error)
+    Alert.alert('Ops', 'Não foi possivel criar um novo hábito')
+  }
+}
 
       return (
 
@@ -58,6 +71,8 @@ if(weekDays.includes(weekDayIndex)) {
                    className="h-12 pl-4 rounded-lg mt-3 bg-zinc-900 text-white border-2 border-zinc-800 focus-border-green-600"
                    placeholder="Exercícios, dormir bem , etc..."
                    placeholderTextColor={colors.zinc[400]}
+                   onChangeText={setTitle}
+                   value={title}
                    />
                    
                    <Text 
@@ -81,6 +96,7 @@ if(weekDays.includes(weekDayIndex)) {
                   <TouchableOpacity
                   className="w-full h-14 flex-row items-center justify-center bg-green-600 rounded-md mt-6"
                   activeOpacity={0.7}
+                  onPress={handleCreateNewHabit}
                   >
                   
                     <Feather

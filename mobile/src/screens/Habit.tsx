@@ -1,16 +1,30 @@
 import { useRoute } from "@react-navigation/native";
 import dayjs from "dayjs";
-import { View, ScrollView, Text } from "react-native";
+import { useEffect, useState } from "react";
+import { View, ScrollView, Text, Alert } from "react-native";
 import { BackButton } from "../components/BackButton";
 import { CheckBox } from "../components/Checkbox";
+import {Loading}  from "../components/Loading";
 import { ProgressBar } from "../components/ProgressBar";
+import { api } from "../lib/axios";
 
 interface Params {
   date:string;
 } 
 
+interface DayInfoProps {
+  completedHabits:string[];
+  possibleHabits:{
+    id:string;
+    title:string
+  } []
+}
+
  export function Habit() {
 
+  const [completedHabits, setCompletedHabits] = useState<string[]> ([])
+  const [dayInfo, setDayInfo] = useState<DayInfoProps | null >(null)
+  const [Loading, setLoading] = useState(true)
     const route = useRoute()
     const {date } = route.params as Params
 
@@ -18,6 +32,39 @@ interface Params {
     const dayOfWeek = parsedDate.format('dddd')
     const dayAndMonth = parsedDate.format('DD/MM')
 
+async function fetchHabits(){
+  try {
+    setLoading(true)
+    const response = await api.get('/day' , {params:{date}});
+    setDayInfo(response.data)
+    setCompletedHabits(response.data.completedHabits)
+  } catch (error) {
+    console.log(error);
+     Alert.alert('Ops','Não foi possivel carregar as informações')
+  } finally{
+setLoading(false)
+  }
+}
+
+async function handleToggleHabit(habitId:string) {
+  if (completedHabits.includes(habitId)) {
+setCompletedHabits(prevState => prevState.filter(habit => habit !== habitId))
+  } else {
+    setCompletedHabits(prevState => [...prevState, habitId])
+  }
+}
+
+
+
+useEffect(() =>{
+  fetchHabits()
+},[]);
+
+if (loading) {
+  return (
+    <Loading />
+  )
+}
    return (
 
      <View
@@ -45,16 +92,19 @@ interface Params {
         <View 
         className="mt-6"
         >
-       
-       <CheckBox
-          title="beber 4 litros de agua hj"
-          checked={false }
-          />
-
+       {
+        dayInfo?.possibleHabits &&
+        dayInfo?.possibleHabits.map(habit => (
           <CheckBox
-          title="Caminhar"
-          checked={true}
-          />
+          key={habit.id}
+          title={habit.title}
+          checked={completedHabits.includes(habit.id)}
+          onPress={() => {handleToggleHabit(habit.id)}}
+            />
+          
+        ))
+       }
+    
         </View>
 
       </ScrollView>

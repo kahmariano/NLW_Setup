@@ -34,11 +34,11 @@ async function fetchData(){
     setLoading(true)
     const response = await api.get('/summary')
     setSummary(response.data)
-
+    console.log(response.data)
+    setLoading(false);
   } catch(error){
+    setLoading(false);
     Alert.alert('Ops', 'Não foi possível carregar')
-  } finally{
-setLoading(false)
   }
 }
 
@@ -46,13 +46,15 @@ useEffect(() => {
   fetchData()
 },[])
 
-if (loading) {
-  return (
-    <Loading/>
-  )
-}
+// if (loading) {
+//   return (
+//     <Loading/>
+//   )
+// }
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <View className="flex-1 bg-background px-8 pt-16 ">
       <Header />
       <View
@@ -74,12 +76,10 @@ if (loading) {
       >
    
    {
-    summary &&
-         <View className='flex-row flex-wrap'>{
-
-           
-         
-            datesFromYearStart.map(date => {
+    summary && (
+         <View className='flex-row flex-wrap'>
+<>
+            {datesFromYearStart.map(date => {
             const dayWithHabits = summary.find(day => {
             return dayjs(date).isSame(day.date, 'day')
               })
@@ -107,8 +107,13 @@ if (loading) {
               )) 
 
         }  
+</>
+           
+         
 
      </View>
+
+    )
    }
     
       </ScrollView>

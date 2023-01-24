@@ -31,7 +31,7 @@ await api.post('habits', {
 setTitle('')
 setWeekDays([])
 
-alert('habito criadp')
+alert('Hábito criado com sucesso ')
 }
 
 function handleToggleWeekDay(weekDay:number) {
@@ -71,8 +71,8 @@ function handleToggleWeekDay(weekDay:number) {
       </label>
 
       <div className="flex flex-col gap-2 mt-3">
-        {availableWeekdays.map((weekDay, index) => {
-          return(
+        {availableWeekdays.map((weekDay, index) => 
+          (
             <Checkbox.Root
             key={weekDay}
             className="flex items-center gap-3 group focus:outline-none'"
@@ -98,7 +98,7 @@ function handleToggleWeekDay(weekDay:number) {
               </span>
             </Checkbox.Root>
           )
-        })}
+        )}
                  
                  
 

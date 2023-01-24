@@ -38,8 +38,8 @@ api.get('day', {
   const isHabitAlreadyCompleted = habitsInfo!.completedHabits.includes(habitId)
       await api.patch(`/habits/${habitId}/toggle`)
       
-      let completedHabits:string[]=[]
-
+      let completedHabits:string[] = []
+ 
       if (isHabitAlreadyCompleted){
 completedHabits = habitsInfo!.completedHabits.filter(id=>id !== habitId)
 

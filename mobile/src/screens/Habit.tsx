@@ -1,6 +1,6 @@
 import { useRoute } from "@react-navigation/native";
 import clsx from "clsx";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { View, ScrollView, Text, Alert } from "react-native";
 import { BackButton } from "../components/BackButton";
@@ -24,7 +24,8 @@ interface DayInfoProps {
 }
 
  export function Habit() {
-const isDateInPast = parsedDate.endOf('day').isBefore(new Date())
+
+  
   const [completedHabits, setCompletedHabits] = useState<string[]> ([])
   const [dayInfo, setDayInfo] = useState<DayInfoProps | null >(null)
   const [Loading, setLoading] = useState(true)
@@ -32,6 +33,7 @@ const isDateInPast = parsedDate.endOf('day').isBefore(new Date())
     const {date } = route.params as Params
 
     const parsedDate = dayjs(date)
+    const isDateInPast = parsedDate.endOf('day').isBefore(new Date())
     const dayOfWeek = parsedDate.format('dddd')
     const dayAndMonth = parsedDate.format('DD/MM')
 
@@ -52,12 +54,18 @@ setLoading(false)
 }
 
 async function handleToggleHabit(habitId:string) {
+  try { 
+    await api.patch(`/habits/${habitId}/toggle`)
   if (completedHabits.includes(habitId)) {
 setCompletedHabits(prevState => prevState.filter(habit => habit !== habitId))
   } else {
     setCompletedHabits(prevState => [...prevState, habitId])
   }
+} catch (error){
+  console.log(error)
+  Alert.alert('Ops','Não foi possivel carregar as informações')
 }
+
 
 
 
@@ -68,7 +76,7 @@ useEffect(() =>{
 if (loading) {
   return (
     <Loading />
-  )
+  ) 
 }
    return (
 
@@ -128,4 +136,4 @@ if (loading) {
 
      </View>
 
-  )}
+  )}}
